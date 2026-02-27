@@ -1,0 +1,68 @@
+version: "3.8"
+
+# MatlabToCpp Demo Environment
+# Jenkins CI/CD + Sonatype Nexus artifact repository
+#
+# Usage:
+#   docker compose up -d
+#   docker compose logs -f
+
+services:
+  jenkins:
+    build:
+      context: ./jenkins
+      dockerfile: Dockerfile
+    container_name: matlab-jenkins
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+      - "50000:50000"   # Agent connections
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /opt/matlab:/opt/matlab:ro                    # Host MATLAB (read-only)
+      - /var/run/docker.sock:/var/run/docker.sock     # Docker-in-Docker (optional)
+    environment:
+      - JAVA_OPTS=-Djenkins.install.runSetupWizard=false -Xmx2g
+      - CASC_JENKINS_CONFIG=/var/jenkins_home/casc.yaml
+      - MATLAB_ROOT=/opt/matlab/R2024b
+      - NEXUS_URL=http://nexus:8081/repository/conan-hosted/
+    networks:
+      - pipeline-net
+    depends_on:
+      nexus:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/login"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 120s
+
+  nexus:
+    image: sonatype/nexus3:3.72.0
+    container_name: matlab-nexus
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    volumes:
+      - nexus_data:/nexus-data
+    environment:
+      - INSTALL4J_ADD_VM_PARAMS=-Xms1g -Xmx2g -XX:MaxDirectMemorySize=2g
+    networks:
+      - pipeline-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/service/rest/v1/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 15
+      start_period: 120s
+
+volumes:
+  jenkins_home:
+    name: matlab-jenkins-home
+  nexus_data:
+    name: matlab-nexus-data
+
+networks:
+  pipeline-net:
+    name: matlab-pipeline-net

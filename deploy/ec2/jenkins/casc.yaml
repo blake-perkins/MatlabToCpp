@@ -1,0 +1,73 @@
+# Jenkins Configuration as Code (JCasC)
+# Auto-configures Jenkins on first boot — no manual setup needed.
+#
+# Reference: https://github.com/jenkinsci/configuration-as-code-plugin
+
+jenkins:
+  systemMessage: "MatlabToCpp Pipeline — Demo Environment"
+
+  # Security — simple demo credentials (change for production)
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: "admin"
+          password: "${JENKINS_ADMIN_PASSWORD:-admin}"
+          name: "Admin"
+
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: true
+
+  # Use the built-in node as the build agent
+  numExecutors: 4
+  labelString: "matlab-linux"
+  mode: NORMAL
+
+  # Node properties — set environment variables
+  nodeProperties:
+    - envVars:
+        env:
+          - key: "MATLAB_ROOT"
+            value: "/opt/matlab/R2024b"
+          - key: "NEXUS_URL"
+            value: "http://nexus:8081/repository/conan-hosted/"
+          - key: "PATH+MATLAB"
+            value: "/opt/matlab/R2024b/bin"
+
+  # Global tool configuration
+  tools: {}
+
+# Credentials for Nexus
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+          - usernamePassword:
+              scope: GLOBAL
+              id: "nexus-conan-creds"
+              username: "admin"
+              password: "${NEXUS_ADMIN_PASSWORD:-admin123}"
+              description: "Nexus Conan repository credentials"
+          - string:
+              scope: GLOBAL
+              id: "nexus-conan-url"
+              secret: "http://nexus:8081/repository/conan-hosted/"
+              description: "Nexus Conan repository URL"
+
+# Unclassified settings
+unclassified:
+  location:
+    url: "${JENKINS_URL:-http://localhost:8080/}"
+
+  # Timestamp output
+  timestamper:
+    allPipelines: true
+
+  # ANSI color support
+  ansiColorBuildWrapper:
+    globalColorMapName: "xterm"
+
+# Job DSL seed — auto-create the pipeline job on first boot
+jobs:
+  - file: /var/jenkins_home/seed-job.groovy

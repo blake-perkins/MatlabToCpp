@@ -1,0 +1,37 @@
+# Jenkins plugins for MatlabToCpp pipeline
+# Installed at image build time for fast first boot
+
+# Pipeline
+workflow-aggregator:latest
+pipeline-stage-view:latest
+
+# Git
+git:latest
+github:latest
+github-branch-source:latest
+
+# Configuration as Code
+configuration-as-code:latest
+
+# Job DSL (auto-create pipeline jobs)
+job-dsl:latest
+
+# Credentials
+credentials-binding:latest
+plain-credentials:latest
+
+# Build tools
+timestamper:latest
+ansicolor:latest
+ws-cleanup:latest
+
+# Test results
+junit:latest
+
+# Email notifications
+email-ext:latest
+mailer:latest
+
+# UI
+locale:latest
+dark-theme:latest
