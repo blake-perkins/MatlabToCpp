@@ -106,13 +106,8 @@ elif [ -n "${MATLAB_INSTALLER:-}" ] && [ -f "$MATLAB_INSTALLER" ]; then
         || log_warn "MATLAB installation failed. You can install manually later."
 else
     log_warn "MATLAB not found and no installer provided."
-    log_warn "To install MATLAB later:"
-    log_warn "  1. Download installer from mathworks.com"
-    log_warn "  2. Run: MATLAB_INSTALLER=/path/to/installer bash deploy/ec2/setup.sh"
-    log_warn "  Or install manually to /opt/matlab/R2024b"
-    log_warn ""
-    log_warn "The demo will work without MATLAB (using the Python simulation)."
-    log_warn "Jenkins pipeline stages that need MATLAB will be skipped."
+    log_info "Installing mock MATLAB for demo mode..."
+    bash "$SCRIPT_DIR/matlab-mock/install.sh"
 fi
 
 # Create /opt/matlab directory if it doesn't exist (so Docker volume mount works)

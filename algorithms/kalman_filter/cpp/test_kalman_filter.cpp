@@ -179,9 +179,9 @@ public:
             double updated_state[2] = {0.0, 0.0};
             double updated_cov[4] = {0.0, 0.0, 0.0, 0.0};
 
-            kalman_filter(state, tc.measurement, cov,
-                          tc.measurement_noise, tc.process_noise,
-                          updated_state, updated_cov);
+            kalman_filter::kalman_filter(state, tc.measurement, cov,
+                                        tc.measurement_noise, tc.process_noise,
+                                        updated_state, updated_cov);
 
             json result;
             result["test_name"] = tc.name;
