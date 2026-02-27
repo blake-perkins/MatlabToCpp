@@ -1,7 +1,7 @@
 #!/bin/bash
 # setup.sh — One-script deployment for MatlabToCpp demo environment.
 #
-# Run this on a fresh Ubuntu 24.04 EC2 instance:
+# Run this on a fresh RHEL 9 EC2 instance:
 #   git clone https://github.com/blake-perkins/MatlabToCpp.git
 #   cd MatlabToCpp
 #   bash deploy/ec2/setup.sh
@@ -40,22 +40,13 @@ log_info "Step 1/6: Installing Docker..."
 if command -v docker &>/dev/null; then
     log_info "Docker already installed: $(docker --version)"
 else
-    sudo apt-get update -qq
-    sudo apt-get install -y -qq ca-certificates curl gnupg
+    sudo dnf install -y dnf-plugins-core
+    sudo dnf config-manager --add-repo https://download.docker.com/linux/rhel/docker-ce.repo
+    sudo dnf install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
 
-    # Docker GPG key
-    sudo install -m 0755 -d /etc/apt/keyrings
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
-        sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-    sudo chmod a+r /etc/apt/keyrings/docker.gpg
-
-    # Docker repo
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
-        https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | \
-        sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-
-    sudo apt-get update -qq
-    sudo apt-get install -y -qq docker-ce docker-ce-cli containerd.io docker-compose-plugin
+    # Start and enable Docker
+    sudo systemctl start docker
+    sudo systemctl enable docker
 
     # Allow current user to run docker without sudo
     sudo usermod -aG docker "$USER"
@@ -66,23 +57,22 @@ fi
 
 log_info "Step 2/6: Installing build tools..."
 
-sudo apt-get install -y -qq \
+sudo dnf install -y \
     cmake \
-    g++ \
+    gcc-c++ \
     make \
     python3 \
     python3-pip \
-    python3-venv \
-    xvfb \
+    xorg-x11-server-Xvfb \
     jq \
-    git
+    git \
+    curl
 
 # Conan 2
 if command -v conan &>/dev/null; then
     log_info "Conan already installed: $(conan --version)"
 else
-    pip3 install --break-system-packages conan jsonschema 2>/dev/null || \
-        pip3 install conan jsonschema
+    pip3 install conan jsonschema
     log_info "Conan installed: $(conan --version 2>/dev/null || echo 'installed')"
 fi
 
