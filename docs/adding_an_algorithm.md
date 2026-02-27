@@ -8,6 +8,8 @@ This guide walks you through adding a new MATLAB algorithm to the pipeline. Once
 - You know the function signature (input types, sizes, output types)
 - You have test cases with known inputs and expected outputs
 
+**Additional examples:** Besides `kalman_filter` (fixed-size array inputs), you can reference `low_pass_filter` (variable-length array input) and `pid_controller` (all-scalar inputs with multiple pointer outputs) for different patterns.
+
 ## Step-by-Step
 
 ### 1. Create the algorithm directory
@@ -274,3 +276,59 @@ Version bumps are determined from your commit messages:
 - MATLAB and C++ are producing different outputs for the same inputs
 - Check for numerical precision issues (tighten or loosen tolerances)
 - Look at the equivalence report for which test cases fail
+
+## Generating Test Vectors from Real MATLAB
+
+Instead of hand-computing expected outputs, run your algorithm in MATLAB and capture the results:
+
+```matlab
+function generate_vectors(output_file)
+%GENERATE_VECTORS Create JSON test vectors from MATLAB outputs.
+
+    test_cases = {};
+
+    % --- Test case 1 ---
+    inputs1.param_a = [1.0, 2.0, 3.0];
+    inputs1.param_b = 0.5;
+    [out1] = my_algorithm(inputs1.param_a, inputs1.param_b);
+
+    tc1.name = 'nominal_case';
+    tc1.description = 'Standard operating conditions';
+    tc1.inputs = inputs1;
+    tc1.expected_output.result = out1(:)';
+    tc1.tolerance.absolute = 1e-10;
+    test_cases{end+1} = tc1;
+
+    % --- Add more test cases ---
+
+    data.algorithm = 'my_algorithm';
+    data.version = '1.0';
+    data.global_tolerance.absolute = 1e-10;
+    data.test_cases = test_cases;
+
+    fid = fopen(output_file, 'w');
+    fprintf(fid, '%s', jsonencode(data));
+    fclose(fid);
+end
+```
+
+Run: `generate_vectors('test_vectors/nominal.json')` in MATLAB.
+
+## MATLAB Coder Compatibility Checklist
+
+Before pushing, verify your code works with MATLAB Coder:
+
+- [ ] `%#codegen` directive in every function
+- [ ] No unsupported functions ([MathWorks list](https://www.mathworks.com/help/coder/ug/functions-and-objects-supported-for-cc-code-generation.html))
+- [ ] All input sizes deterministic (or use `coder.typeof` for variable-size)
+- [ ] No function handles passed as arguments
+- [ ] No cell arrays in generated code paths
+- [ ] No `try/catch` blocks in generated code paths
+- [ ] No string objects (use char arrays)
+- [ ] No global variables
+- [ ] Local test: `codegen_config('/tmp/test_output')` succeeds
+
+## Next Steps
+
+- For transitioning to real MATLAB and production infrastructure, see [going_to_production.md](going_to_production.md)
+- For how C++ developers consume your published packages, see [consuming_packages.md](consuming_packages.md)

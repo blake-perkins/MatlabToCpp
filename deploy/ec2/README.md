@@ -79,7 +79,7 @@ This takes ~5 minutes and will:
 After a successful pipeline run:
 1. Open Nexus at `http://<EC2_IP>:8081`
 2. Browse **conan-hosted** repository
-3. You should see `kalman_filter/0.2.0`
+3. You should see all three algorithms: `kalman_filter`, `low_pass_filter`, `pid_controller`
 
 ## MATLAB Installation (Optional)
 
@@ -159,6 +159,14 @@ Log out and back in, or run: `newgrp docker`
 
 ### Port conflicts
 If 8080 or 8081 are in use, edit `deploy/ec2/docker-compose.yml` to change port mappings.
+
+## Going to Production
+
+This deployment uses demo credentials and mock MATLAB. For production use, see [docs/going_to_production.md](../../docs/going_to_production.md) which covers:
+- Installing real MATLAB
+- Hardening Jenkins and Nexus credentials
+- Configuring email notifications and GitHub webhooks
+- Replacing demo algorithms with real ones
 
 ## Cleanup
 
