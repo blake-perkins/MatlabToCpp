@@ -40,11 +40,14 @@ log_info "Step 1/6: Installing Docker..."
 if command -v docker &>/dev/null; then
     log_info "Docker already installed: $(docker --version)"
 else
-    sudo dnf install -y dnf-plugins-core
+    # Install Docker from Amazon Linux repos
+    sudo dnf install -y docker
 
-    # Docker CE repo — CentOS repo works on both Amazon Linux 2023 and RHEL 9
-    sudo dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-    sudo dnf install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+    # Install Docker Compose plugin
+    sudo mkdir -p /usr/local/lib/docker/cli-plugins
+    sudo curl -SL "https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64" \
+        -o /usr/local/lib/docker/cli-plugins/docker-compose
+    sudo chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
 
     # Start and enable Docker
     sudo systemctl start docker
