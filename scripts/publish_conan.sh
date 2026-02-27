@@ -33,23 +33,32 @@ fi
 
 # Configure Nexus remote (idempotent)
 conan remote add nexus "$NEXUS_URL" --force 2>/dev/null || true
-conan remote login nexus "$NEXUS_USER" -p "$NEXUS_PASS"
+conan remote login nexus "$NEXUS_USER" -p "$NEXUS_PASS" < /dev/null
 
 # Set GENERATED_DIR for the Conan build
 export GENERATED_DIR="${ALGO_DIR}/generated"
+
+# Ensure Conan has a default profile
+conan profile detect --exist-ok 2>/dev/null || true
+
+# Use repo profile if it exists, otherwise default
+CONAN_PROFILE="${REPO_ROOT}/conan/profiles/linux-gcc12-release"
+if [ ! -f "$CONAN_PROFILE" ]; then
+    CONAN_PROFILE="default"
+fi
 
 # Create the package
 conan create "${ALGO_DIR}/cpp" \
     --name="${ALGO}" \
     --version="${NEW_VERSION}" \
-    -pr="${REPO_ROOT}/conan/profiles/linux-gcc12-release" \
+    -pr="$CONAN_PROFILE" \
     --build=missing \
-    2>&1 | tee "${WORKSPACE}/results/${ALGO}/conan_create.log"
+    2>&1 < /dev/null | tee "${WORKSPACE}/results/${ALGO}/conan_create.log"
 
 # Upload to Nexus
 conan upload "${ALGO}/${NEW_VERSION}" \
     --remote=nexus \
     --confirm \
-    2>&1 | tee -a "${WORKSPACE}/results/${ALGO}/conan_upload.log"
+    2>&1 < /dev/null | tee -a "${WORKSPACE}/results/${ALGO}/conan_upload.log"
 
 log_info "Published: ${ALGO}/${NEW_VERSION} to Nexus"
