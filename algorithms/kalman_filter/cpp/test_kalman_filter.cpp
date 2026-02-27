@@ -185,9 +185,9 @@ public:
 
             json result;
             result["test_name"] = tc.name;
-            result["actual_state"] = {updated_state[0], updated_state[1]};
-            result["actual_covariance"] = {updated_cov[0], updated_cov[1],
-                                           updated_cov[2], updated_cov[3]};
+            result["actual_updated_state"] = {updated_state[0], updated_state[1]};
+            result["actual_updated_covariance"] = {updated_cov[0], updated_cov[1],
+                                                    updated_cov[2], updated_cov[3]};
             result["tolerance"] = tc.abs_tolerance;
             outputs.push_back(result);
         }
