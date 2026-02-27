@@ -84,6 +84,14 @@ else
     fi
 fi
 
+# ---- Enable Conan Bearer Token Realm (required for Conan 2 auth) ----
+echo "[INFO] Enabling Conan Bearer Token Realm..."
+curl -sf -X PUT "${NEXUS_URL}/service/rest/v1/security/realms/active" \
+    -u "admin:${ADMIN_PASSWORD}" \
+    -H "Content-Type: application/json" \
+    -d '["NexusAuthenticatingRealm","ConanToken"]' \
+    > /dev/null 2>&1 || echo "[WARN] Could not enable Conan Bearer Token Realm"
+
 # ---- Enable anonymous access (demo convenience) ----
 echo "[INFO] Enabling anonymous access for demo..."
 curl -sf -X PUT "${NEXUS_URL}/service/rest/v1/security/anonymous" \
