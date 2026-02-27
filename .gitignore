@@ -1,0 +1,31 @@
+# Generated C++ code (produced by MATLAB Coder in CI)
+**/generated/
+
+# Build artifacts
+build/
+out/
+
+# Conan
+.conan2/
+CMakeUserPresets.json
+
+# MATLAB artifacts
+*.mex*
+*.slxc
+codegen/
+*.autosave
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Jenkins workspace artifacts
+results/
+changed_algorithms.txt

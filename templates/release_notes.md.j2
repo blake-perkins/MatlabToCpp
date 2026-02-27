@@ -1,0 +1,40 @@
+# {{ algorithm }} v{{ version }} — Release Notes
+
+**Date**: {{ date }}
+
+## Equivalence Summary
+
+| Metric | Value |
+|--------|-------|
+| Total tests | {{ equivalence.total_tests }} |
+| All passed | {{ equivalence.all_passed }} |
+| Max absolute error | {{ equivalence.max_absolute_error }} |
+| Max relative error | {{ equivalence.max_relative_error }} |
+
+## MATLAB Source Changes
+
+{{ matlab_diff_summary }}
+
+## API Changes
+
+```
+{{ api_diff }}
+```
+
+## Generated C++ Changes
+
+{{ generated_diff_summary }}
+
+## Conan Install
+
+```bash
+conan install --requires={{ algorithm }}/{{ version }} --remote=nexus
+```
+
+## Full Artifacts
+
+- [Release Notes]({{ build_url }}artifact/results/{{ algorithm }}/reports/release_notes.md)
+- [Equivalence Report]({{ build_url }}artifact/results/{{ algorithm }}/equivalence/equivalence_report.json)
+- [API Signature Diff]({{ build_url }}artifact/results/{{ algorithm }}/reports/api_signature_diff.txt)
+- [MATLAB Source Diff]({{ build_url }}artifact/results/{{ algorithm }}/reports/matlab_source_diff.patch)
+- [Generated C++ Diff]({{ build_url }}artifact/results/{{ algorithm }}/reports/generated_cpp_diff.patch)

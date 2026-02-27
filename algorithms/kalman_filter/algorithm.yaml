@@ -1,0 +1,15 @@
+name: kalman_filter
+display_name: "Kalman Filter"
+description: "Extended Kalman filter for state estimation"
+matlab_entry_point: kalman_filter
+
+# Who owns this algorithm (notified on pipeline failures)
+owner: algorithm-team@example.com
+team: navigation
+
+# C++ teams that consume this package (notified on new releases)
+consumers:
+  - cpp-integration@example.com
+
+# Other algorithms this one depends on (empty for standalone)
+dependencies: []
