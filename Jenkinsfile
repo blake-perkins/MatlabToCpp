@@ -87,10 +87,21 @@ pipeline {
                     }
 
                     // Detect branch name (works for both pipelineJob and multibranch)
-                    env.GIT_BRANCH_NAME = sh(
+                    // Jenkins SCM plugin sets GIT_BRANCH (e.g. "origin/main")
+                    // For detached HEAD, fall back to checking if HEAD matches origin/main
+                    def detectedBranch = sh(
                         script: "git rev-parse --abbrev-ref HEAD",
                         returnStdout: true
                     ).trim()
+                    if (detectedBranch == 'HEAD') {
+                        // Detached HEAD — check if this commit is on origin/main
+                        def isMain = sh(
+                            script: "git branch -r --contains HEAD 2>/dev/null | grep -q 'origin/main' && echo 'main' || echo 'detached'",
+                            returnStdout: true
+                        ).trim()
+                        detectedBranch = isMain
+                    }
+                    env.GIT_BRANCH_NAME = detectedBranch
                     echo "Branch: ${env.GIT_BRANCH_NAME}"
                 }
             }
