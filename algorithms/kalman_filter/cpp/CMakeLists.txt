@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
+project(kalman_filter_pipeline CXX)
 
 # Algorithm name — used for library target, test target, and install paths
 set(ALGO_NAME kalman_filter)
