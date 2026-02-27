@@ -33,7 +33,11 @@ fi
 
 # Configure Nexus remote (idempotent)
 conan remote add nexus "$NEXUS_URL" --force 2>/dev/null || true
-conan remote login nexus "$NEXUS_USER" -p "$NEXUS_PASS" < /dev/null
+conan remote login nexus "$NEXUS_USER" -p "$NEXUS_PASS" < /dev/null || true
+
+# Export Conan env vars for authentication (more reliable than stored credentials)
+export CONAN_LOGIN_USERNAME_NEXUS="$NEXUS_USER"
+export CONAN_PASSWORD_NEXUS="$NEXUS_PASS"
 
 # Set GENERATED_DIR for the Conan build
 export GENERATED_DIR="${ALGO_DIR}/generated"
