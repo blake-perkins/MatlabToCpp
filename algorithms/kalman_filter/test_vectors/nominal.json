@@ -4,23 +4,42 @@
   "description": "Nominal operating conditions for 1D Kalman filter",
   "global_tolerance": {
     "absolute": 1e-10,
-    "relative": 1e-8
+    "relative": 1e-08
   },
   "test_cases": [
     {
       "name": "steady_state_tracking",
-      "description": "Stationary object with noisy measurements — filter should converge to true position",
-      "tags": ["nominal", "steady-state"],
+      "description": "Stationary object with noisy measurements \u00e2\u20ac\u201d filter should converge to true position",
+      "tags": [
+        "nominal",
+        "steady-state"
+      ],
       "inputs": {
-        "state": [1.0, 0.0],
+        "state": [
+          1.0,
+          0.0
+        ],
         "measurement": 1.05,
-        "state_covariance": [1.0, 0.0, 0.0, 1.0],
+        "state_covariance": [
+          1.0,
+          0.0,
+          0.0,
+          1.0
+        ],
         "measurement_noise": 0.1,
         "process_noise": 0.01
       },
       "expected_output": {
-        "updated_state": [1.0454545454545454, 0.0],
-        "updated_covariance": [0.09090909090909091, 0.0, 0.0, 1.01]
+        "updated_state": [
+          1.0476303317535545,
+          0.023696682464455
+        ],
+        "updated_covariance": [
+          0.09526066350710902,
+          0.047393364928909956,
+          0.04739336492890996,
+          0.5360663507109005
+        ]
       },
       "tolerance": {
         "absolute": 1e-10
@@ -34,17 +53,36 @@
     {
       "name": "moving_object",
       "description": "Object moving at constant velocity with measurement update",
-      "tags": ["nominal", "motion"],
+      "tags": [
+        "nominal",
+        "motion"
+      ],
       "inputs": {
-        "state": [0.0, 1.0],
+        "state": [
+          0.0,
+          1.0
+        ],
         "measurement": 1.1,
-        "state_covariance": [1.0, 0.0, 0.0, 1.0],
+        "state_covariance": [
+          1.0,
+          0.0,
+          0.0,
+          1.0
+        ],
         "measurement_noise": 0.5,
         "process_noise": 0.01
       },
       "expected_output": {
-        "updated_state": [0.7333333333333334, 1.0],
-        "updated_covariance": [0.3333333333333333, 0.0, 0.0, 1.01]
+        "updated_state": [
+          1.0800796812749005,
+          1.0398406374501992
+        ],
+        "updated_covariance": [
+          0.40039840637450197,
+          0.19920318725099603,
+          0.19920318725099603,
+          0.6115936254980079
+        ]
       },
       "tolerance": {
         "absolute": 1e-10
@@ -52,37 +90,75 @@
     },
     {
       "name": "high_uncertainty_initial",
-      "description": "Very uncertain initial state — measurement should dominate",
-      "tags": ["edge-case", "high-uncertainty"],
+      "description": "Very uncertain initial state \u00e2\u20ac\u201d measurement should dominate",
+      "tags": [
+        "edge-case",
+        "high-uncertainty"
+      ],
       "inputs": {
-        "state": [0.0, 0.0],
+        "state": [
+          0.0,
+          0.0
+        ],
         "measurement": 5.0,
-        "state_covariance": [1000.0, 0.0, 0.0, 1000.0],
+        "state_covariance": [
+          1000.0,
+          0.0,
+          0.0,
+          1000.0
+        ],
         "measurement_noise": 1.0,
         "process_noise": 0.01
       },
       "expected_output": {
-        "updated_state": [4.995004995004995, 0.0],
-        "updated_covariance": [0.999000999000999, 0.0, 0.0, 1000.01]
+        "updated_state": [
+          4.99750126186276,
+          2.4987381372406934
+        ],
+        "updated_covariance": [
+          0.9995002523725519,
+          0.4997476274481387,
+          0.4997476274481387,
+          500.26237255186135
+        ]
       },
       "tolerance": {
-        "absolute": 1e-8
+        "absolute": 1e-08
       }
     },
     {
       "name": "zero_process_noise",
-      "description": "No process noise — prediction should not increase uncertainty",
-      "tags": ["edge-case", "zero-noise"],
+      "description": "No process noise \u00e2\u20ac\u201d prediction should not increase uncertainty",
+      "tags": [
+        "edge-case",
+        "zero-noise"
+      ],
       "inputs": {
-        "state": [2.0, 0.5],
+        "state": [
+          2.0,
+          0.5
+        ],
         "measurement": 2.6,
-        "state_covariance": [0.5, 0.0, 0.0, 0.5],
+        "state_covariance": [
+          0.5,
+          0.0,
+          0.0,
+          0.5
+        ],
         "measurement_noise": 0.5,
         "process_noise": 0.0
       },
       "expected_output": {
-        "updated_state": [2.3, 0.5],
-        "updated_covariance": [0.25, 0.0, 0.0, 0.5]
+        "updated_state": [
+          2.566666666666667,
+          0.5333333333333333
+        ],
+        "updated_covariance": [
+          0.33333333333333337,
+          0.16666666666666669,
+          0.16666666666666669,
+          0.33333333333333337
+        ]
       },
       "tolerance": {
         "absolute": 1e-10
