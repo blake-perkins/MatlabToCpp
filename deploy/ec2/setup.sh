@@ -1,7 +1,7 @@
 #!/bin/bash
 # setup.sh — One-script deployment for MatlabToCpp demo environment.
 #
-# Run this on a fresh RHEL 9 EC2 instance:
+# Run this on a fresh Amazon Linux 2023 or RHEL 9 EC2 instance:
 #   git clone https://github.com/blake-perkins/MatlabToCpp.git
 #   cd MatlabToCpp
 #   bash deploy/ec2/setup.sh
@@ -41,7 +41,9 @@ if command -v docker &>/dev/null; then
     log_info "Docker already installed: $(docker --version)"
 else
     sudo dnf install -y dnf-plugins-core
-    sudo dnf config-manager --add-repo https://download.docker.com/linux/rhel/docker-ce.repo
+
+    # Docker CE repo — CentOS repo works on both Amazon Linux 2023 and RHEL 9
+    sudo dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
     sudo dnf install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
 
     # Start and enable Docker

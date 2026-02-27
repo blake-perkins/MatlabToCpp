@@ -5,7 +5,7 @@ Deploy the full MatlabToCpp pipeline on an AWS EC2 instance with Jenkins, Nexus,
 ## Architecture
 
 ```
-EC2 Instance (RHEL 9)
+EC2 Instance (Amazon Linux 2023)
 +------------------------------------------+
 |  Docker Compose                          |
 |  +----------------+  +----------------+ |
@@ -25,7 +25,7 @@ EC2 Instance (RHEL 9)
 
 | Setting | Value |
 |---------|-------|
-| AMI | RHEL 9 (Red Hat Enterprise Linux 9) |
+| AMI | Amazon Linux 2023 (free tier eligible) |
 | Instance type | m5.2xlarge (8 vCPU, 32 GB) or t3.xlarge (4 vCPU, 16 GB) for budget |
 | Storage | 50 GB gp3 |
 | Key pair | Your existing key pair |
@@ -53,7 +53,7 @@ bash deploy/ec2/setup.sh
 ```
 
 This takes ~5 minutes and will:
-- Install Docker (via Docker CE repo for RHEL), CMake, GCC, Python, Conan
+- Install Docker (via Docker CE repo), CMake, GCC, Python, Conan
 - Build a custom Jenkins image with plugins pre-baked
 - Start Jenkins (port 8080) and Nexus (port 8081)
 - Auto-configure Jenkins with the pipeline job
