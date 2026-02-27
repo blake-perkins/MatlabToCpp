@@ -35,9 +35,6 @@ jenkins:
           - key: "PATH+MATLAB"
             value: "/opt/matlab/R2024b/bin"
 
-  # Global tool configuration
-  tools: {}
-
 # Credentials for Nexus
 credentials:
   system:
@@ -60,13 +57,6 @@ unclassified:
   location:
     url: "${JENKINS_URL:-http://localhost:8080/}"
 
-  # Timestamp output
-  timestamper:
-    allPipelines: true
-
-  # ANSI color support
-  ansiColorBuildWrapper:
-    globalColorMapName: "xterm"
 
 # Job DSL seed — auto-create the pipeline job on first boot
 jobs:
