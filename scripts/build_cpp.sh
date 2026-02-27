@@ -20,14 +20,24 @@ log_info "Building C++ for: $ALGO"
 rm -rf "$BUILD_DIR"
 mkdir -p "$BUILD_DIR"
 
+# Ensure Conan has a default profile
+conan profile detect --exist-ok 2>/dev/null || true
+
 # Install Conan dependencies if conanfile exists
 CONAN_TOOLCHAIN=""
 if [ -f "${ALGO_DIR}/cpp/conanfile.py" ]; then
     log_info "Installing Conan dependencies..."
+
+    # Use repo profile if it exists, otherwise default
+    CONAN_PROFILE="${REPO_ROOT}/conan/profiles/linux-gcc12-release"
+    if [ ! -f "$CONAN_PROFILE" ]; then
+        CONAN_PROFILE="default"
+    fi
+
     conan install "${ALGO_DIR}/cpp" \
         --output-folder="${BUILD_DIR}/conan" \
         --build=missing \
-        --profile="${REPO_ROOT}/conan/profiles/linux-gcc12-release" \
+        --profile="${CONAN_PROFILE}" \
         2>&1 | tee "${RESULTS_DIR}/conan_install.log"
 
     CONAN_TOOLCHAIN="-DCMAKE_TOOLCHAIN_FILE=${BUILD_DIR}/conan/conan_toolchain.cmake"
