@@ -106,6 +106,10 @@ else
     } > "$CHANGELOG_FILE"
 fi
 
+# Ensure git user is configured (needed in CI containers)
+git -C "$REPO_ROOT" config user.email "ci@matlabtocpp.example.com" 2>/dev/null || true
+git -C "$REPO_ROOT" config user.name "MatlabToCpp CI" 2>/dev/null || true
+
 # Stage changes and create tag
 git -C "$REPO_ROOT" add "$VERSION_FILE" "$CHANGELOG_FILE"
 git -C "$REPO_ROOT" commit -m "chore(${ALGO}): bump version to ${NEW_VERSION} [skip ci]"

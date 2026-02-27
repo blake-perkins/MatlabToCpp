@@ -266,11 +266,15 @@ pipeline {
             // Push version tags back to Git (main branch only)
             script {
                 if (env.GIT_BRANCH_NAME == 'main') {
-                    withCredentials([usernamePassword(credentialsId: 'github-creds', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PASS')]) {
-                        sh '''
-                            git config credential.helper '!f() { echo "username=${GIT_USER}"; echo "password=${GIT_PASS}"; }; f'
-                            git push origin --tags 2>/dev/null || true
-                        '''
+                    try {
+                        withCredentials([usernamePassword(credentialsId: 'github-creds', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PASS')]) {
+                            sh '''
+                                git config credential.helper '!f() { echo "username=${GIT_USER}"; echo "password=${GIT_PASS}"; }; f'
+                                git push origin --tags 2>/dev/null || true
+                            '''
+                        }
+                    } catch (e) {
+                        echo "Tag push skipped: github-creds not configured (${e.message})"
                     }
                 }
             }
