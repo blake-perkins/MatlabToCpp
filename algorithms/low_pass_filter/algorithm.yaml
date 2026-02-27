@@ -1,0 +1,15 @@
+name: low_pass_filter
+display_name: "Low-Pass Filter"
+description: "First-order IIR low-pass filter for signal smoothing"
+matlab_entry_point: low_pass_filter
+
+# Who owns this algorithm (notified on pipeline failures)
+owner: algorithm-team@example.com
+team: signal-processing
+
+# C++ teams that consume this package (notified on new releases)
+consumers:
+  - cpp-integration@example.com
+
+# Other algorithms this one depends on (empty for standalone)
+dependencies: []

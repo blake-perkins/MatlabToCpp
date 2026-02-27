@@ -1,0 +1,71 @@
+{
+  "algorithm": "low_pass_filter",
+  "version": "1.0",
+  "description": "Nominal test cases for first-order IIR low-pass filter",
+  "global_tolerance": {
+    "absolute": 1e-10,
+    "relative": 1e-08
+  },
+  "test_cases": [
+    {
+      "name": "step_response",
+      "description": "Step input with alpha=0.5 — filter ramps up exponentially",
+      "tags": ["nominal", "step"],
+      "inputs": {
+        "input_signal": [0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+        "alpha": 0.5
+      },
+      "expected_output": {
+        "output_signal": [0.0, 0.0, 0.0, 0.5, 0.75, 0.875, 0.9375, 0.96875]
+      },
+      "tolerance": {
+        "absolute": 1e-10
+      }
+    },
+    {
+      "name": "constant_signal",
+      "description": "Constant input — output should equal input regardless of alpha",
+      "tags": ["nominal", "constant"],
+      "inputs": {
+        "input_signal": [3.0, 3.0, 3.0, 3.0],
+        "alpha": 0.5
+      },
+      "expected_output": {
+        "output_signal": [3.0, 3.0, 3.0, 3.0]
+      },
+      "tolerance": {
+        "absolute": 1e-10
+      }
+    },
+    {
+      "name": "high_smoothing",
+      "description": "Alpha=0.1 with alternating signal — heavy smoothing",
+      "tags": ["nominal", "smoothing"],
+      "inputs": {
+        "input_signal": [0.0, 10.0, 0.0, 10.0, 0.0],
+        "alpha": 0.1
+      },
+      "expected_output": {
+        "output_signal": [0.0, 1.0, 0.9, 1.81, 1.629]
+      },
+      "tolerance": {
+        "absolute": 1e-10
+      }
+    },
+    {
+      "name": "no_smoothing",
+      "description": "Alpha=1.0 — output equals input (passthrough)",
+      "tags": ["edge-case", "passthrough"],
+      "inputs": {
+        "input_signal": [1.0, 5.0, 2.0, 8.0],
+        "alpha": 1.0
+      },
+      "expected_output": {
+        "output_signal": [1.0, 5.0, 2.0, 8.0]
+      },
+      "tolerance": {
+        "absolute": 1e-10
+      }
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+name: pid_controller
+display_name: "PID Controller"
+description: "Discrete PID controller for feedback control"
+matlab_entry_point: pid_controller
+
+# Who owns this algorithm (notified on pipeline failures)
+owner: algorithm-team@example.com
+team: controls
+
+# C++ teams that consume this package (notified on new releases)
+consumers:
+  - cpp-integration@example.com
+
+# Other algorithms this one depends on (empty for standalone)
+dependencies: []

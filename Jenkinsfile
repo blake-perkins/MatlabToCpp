@@ -85,6 +85,13 @@ pipeline {
                     } else {
                         echo "MATLAB not found — skipping MATLAB stages (tests, codegen, equivalence)"
                     }
+
+                    // Detect branch name (works for both pipelineJob and multibranch)
+                    env.GIT_BRANCH_NAME = sh(
+                        script: "git rev-parse --abbrev-ref HEAD",
+                        returnStdout: true
+                    ).trim()
+                    echo "Branch: ${env.GIT_BRANCH_NAME}"
                 }
             }
         }
@@ -175,7 +182,7 @@ pipeline {
         // ---- Stage 7: Version Bump ----
         // Sequential — each algorithm's tag must be committed before the next
         stage('Version Bump') {
-            when { branch 'main' }
+            when { expression { env.GIT_BRANCH_NAME == 'main' } }
             steps {
                 script {
                     def algos = env.CHANGED_ALGORITHMS.split('\n')
@@ -204,7 +211,7 @@ pipeline {
 
         // ---- Stage 9: Publish to Nexus ----
         stage('Publish to Nexus') {
-            when { branch 'main' }
+            when { expression { env.GIT_BRANCH_NAME == 'main' } }
             steps {
                 script {
                     def algos = env.CHANGED_ALGORITHMS.split('\n')
@@ -217,7 +224,7 @@ pipeline {
 
         // ---- Stage 10: Notify ----
         stage('Notify') {
-            when { branch 'main' }
+            when { expression { env.GIT_BRANCH_NAME == 'main' } }
             steps {
                 script {
                     def algos = env.CHANGED_ALGORITHMS.split('\n')
@@ -247,8 +254,13 @@ pipeline {
 
             // Push version tags back to Git (main branch only)
             script {
-                if (env.BRANCH_NAME == 'main') {
-                    sh 'git push origin --tags 2>/dev/null || true'
+                if (env.GIT_BRANCH_NAME == 'main') {
+                    withCredentials([usernamePassword(credentialsId: 'github-creds', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PASS')]) {
+                        sh '''
+                            git config credential.helper '!f() { echo "username=${GIT_USER}"; echo "password=${GIT_PASS}"; }; f'
+                            git push origin --tags 2>/dev/null || true
+                        '''
+                    }
                 }
             }
         }

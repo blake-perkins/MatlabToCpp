@@ -51,6 +51,12 @@ credentials:
               id: "nexus-conan-url"
               secret: "http://nexus:8081/repository/conan-hosted/"
               description: "Nexus Conan repository URL"
+          - usernamePassword:
+              scope: GLOBAL
+              id: "github-creds"
+              username: "${GITHUB_USER:-blake-perkins}"
+              password: "${GITHUB_TOKEN:-}"
+              description: "GitHub credentials for tag pushing"
 
 # Unclassified settings
 unclassified:

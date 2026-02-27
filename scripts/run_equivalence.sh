@@ -77,12 +77,17 @@ for name in sorted(all_names):
     c = cpp_by_name[name]
     tol = m.get("tolerance", 1e-10)
 
-    # Compare all output fields (state, covariance, etc.)
+    # Compare all output fields dynamically (any key starting with "actual_")
     passed = True
     case_max_abs = 0.0
     case_max_rel = 0.0
 
-    for field in ["actual_state", "actual_covariance"]:
+    actual_fields = [k for k in m.keys() if k.startswith("actual_")]
+    if not actual_fields:
+        # Fallback for legacy format
+        actual_fields = [k for k in m.keys() if k not in ("test_name", "tolerance", "passed")]
+
+    for field in actual_fields:
         m_vals = m.get(field, [])
         c_vals = c.get(field, [])
 

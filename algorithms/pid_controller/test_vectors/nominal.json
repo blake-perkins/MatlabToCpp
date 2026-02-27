@@ -1,0 +1,99 @@
+{
+  "algorithm": "pid_controller",
+  "version": "1.0",
+  "description": "Nominal test cases for discrete PID controller",
+  "global_tolerance": {
+    "absolute": 1e-10,
+    "relative": 1e-08
+  },
+  "test_cases": [
+    {
+      "name": "proportional_only",
+      "description": "Pure proportional control (ki=0, kd=0)",
+      "tags": ["nominal", "p-only"],
+      "inputs": {
+        "error": 5.0,
+        "integral": 0.0,
+        "prev_error": 0.0,
+        "kp": 2.0,
+        "ki": 0.0,
+        "kd": 0.0,
+        "dt": 0.1
+      },
+      "expected_output": {
+        "output": 10.0,
+        "new_integral": 0.5,
+        "new_prev_error": 5.0
+      },
+      "tolerance": {
+        "absolute": 1e-10
+      }
+    },
+    {
+      "name": "pi_control",
+      "description": "PI controller (kd=0) with accumulated integral",
+      "tags": ["nominal", "pi"],
+      "inputs": {
+        "error": 3.0,
+        "integral": 1.0,
+        "prev_error": 2.0,
+        "kp": 1.5,
+        "ki": 0.5,
+        "kd": 0.0,
+        "dt": 0.1
+      },
+      "expected_output": {
+        "output": 5.15,
+        "new_integral": 1.3,
+        "new_prev_error": 3.0
+      },
+      "tolerance": {
+        "absolute": 1e-10
+      }
+    },
+    {
+      "name": "full_pid",
+      "description": "Full PID with all three terms active (decreasing error)",
+      "tags": ["nominal", "pid"],
+      "inputs": {
+        "error": 2.0,
+        "integral": 0.5,
+        "prev_error": 3.0,
+        "kp": 1.0,
+        "ki": 0.2,
+        "kd": 0.5,
+        "dt": 0.1
+      },
+      "expected_output": {
+        "output": -2.86,
+        "new_integral": 0.7,
+        "new_prev_error": 2.0
+      },
+      "tolerance": {
+        "absolute": 1e-10
+      }
+    },
+    {
+      "name": "zero_error",
+      "description": "Zero error — output comes only from integral term",
+      "tags": ["edge-case", "zero"],
+      "inputs": {
+        "error": 0.0,
+        "integral": 2.0,
+        "prev_error": 0.0,
+        "kp": 1.0,
+        "ki": 0.5,
+        "kd": 0.3,
+        "dt": 0.1
+      },
+      "expected_output": {
+        "output": 1.0,
+        "new_integral": 2.0,
+        "new_prev_error": 0.0
+      },
+      "tolerance": {
+        "absolute": 1e-10
+      }
+    }
+  ]
+}
