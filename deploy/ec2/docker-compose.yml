@@ -1,5 +1,3 @@
-version: "3.8"
-
 # MatlabToCpp Demo Environment
 # Jenkins CI/CD + Sonatype Nexus artifact repository
 #

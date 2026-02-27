@@ -43,11 +43,17 @@ else
     # Install Docker from Amazon Linux repos
     sudo dnf install -y docker
 
-    # Install Docker Compose plugin
+    # Install Docker Compose and Buildx plugins
     sudo mkdir -p /usr/local/lib/docker/cli-plugins
+
     sudo curl -SL "https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64" \
         -o /usr/local/lib/docker/cli-plugins/docker-compose
     sudo chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
+
+    BUILDX_VERSION=$(curl -s https://api.github.com/repos/docker/buildx/releases/latest | grep '"tag_name"' | cut -d'"' -f4)
+    sudo curl -SL "https://github.com/docker/buildx/releases/download/${BUILDX_VERSION}/buildx-${BUILDX_VERSION}.linux-amd64" \
+        -o /usr/local/lib/docker/cli-plugins/docker-buildx
+    sudo chmod +x /usr/local/lib/docker/cli-plugins/docker-buildx
 
     # Start and enable Docker
     sudo systemctl start docker
@@ -118,11 +124,12 @@ log_info "Step 4/6: Building and starting Jenkins + Nexus..."
 
 cd "$SCRIPT_DIR"
 
+# Use sudo for docker commands since group change requires re-login
 # Build Jenkins image with plugins pre-installed
-docker compose build jenkins 2>&1 | tail -5
+sudo docker compose build jenkins 2>&1 | tail -5
 
 # Start services
-docker compose up -d
+sudo docker compose up -d
 
 log_info "Containers starting... (Jenkins takes 2-3 minutes on first boot)"
 
