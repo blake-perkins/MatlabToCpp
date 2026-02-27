@@ -175,10 +175,10 @@ void kalman_filter(
     double A10 = ikh10 * Pp11 + Pp21;
     double A11 = ikh10 * Pp12 + Pp22;
 
-    double P_up11 = A00 * ikh00 + A01 * ikh10;
-    double P_up12 = A01;
-    double P_up21 = A10 * ikh00 + A11 * ikh10;
-    double P_up22 = A11;
+    double P_up11 = A00 * ikh00;
+    double P_up12 = A00 * ikh10 + A01;
+    double P_up21 = A10 * ikh00;
+    double P_up22 = A10 * ikh10 + A11;
 
     P_up11 += K0 * measurement_noise * K0;
     P_up12 += K0 * measurement_noise * K1;

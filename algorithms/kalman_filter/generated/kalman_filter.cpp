@@ -63,14 +63,11 @@ void kalman_filter(
     double A10 = ikh10 * Pp11 + Pp21;        // ikh11=1
     double A11 = ikh10 * Pp12 + Pp22;        // ikh11=1
 
-    // A * (I_KH)'
-    // (I_KH)' = [1-K0, -K1; 0, 1]
-    double B00 = A00 * ikh00 + A01 * 0.0;      // ... but need (I_KH)^T
-    // (I_KH)^T = [ikh00, ikh10; 0, 1]
-    double P_up11 = A00 * ikh00 + A01 * ikh10;
-    double P_up12 = A00 * 0.0 + A01 * 1.0;
-    double P_up21 = A10 * ikh00 + A11 * ikh10;
-    double P_up22 = A10 * 0.0 + A11 * 1.0;
+    // A * (I_KH)^T where (I_KH)^T = [ikh00, ikh10; 0, 1]
+    double P_up11 = A00 * ikh00;
+    double P_up12 = A00 * ikh10 + A01;
+    double P_up21 = A10 * ikh00;
+    double P_up22 = A10 * ikh10 + A11;
 
     // Add K * R * K'
     P_up11 += K0 * measurement_noise * K0;
