@@ -98,12 +98,21 @@ target_link_libraries(my_app PRIVATE
 ### Build
 
 ```bash
+# First time only: create a default Conan profile
+conan profile detect
+
 # Install dependencies from Nexus
 conan install . --build=missing
 
-# Configure and build
+# Configure and build (cmake 3.23+)
 cmake --preset conan-release
 cmake --build --preset conan-release
+
+# Or if cmake < 3.23:
+cmake -S . -B build/Release -G "Unix Makefiles" \
+    -DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake \
+    -DCMAKE_BUILD_TYPE=Release
+cmake --build build/Release
 ```
 
 ## 4. Call the Algorithm
@@ -211,9 +220,17 @@ See [examples/sensor_pipeline/](../examples/sensor_pipeline/) for a complete wor
 Build and run:
 ```bash
 cd examples/sensor_pipeline
+conan profile detect          # first time only
 conan install . --build=missing
-cmake --preset conan-release
+cmake --preset conan-release  # requires cmake 3.23+
 cmake --build --preset conan-release
+./build/Release/sensor_pipeline
+
+# If cmake < 3.23, replace the cmake lines with:
+cmake -S . -B build/Release -G "Unix Makefiles" \
+    -DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake \
+    -DCMAKE_BUILD_TYPE=Release
+cmake --build build/Release
 ./build/Release/sensor_pipeline
 ```
 
@@ -232,6 +249,20 @@ Pipeline complete. All three algorithms consumed via Conan.
 ```
 
 ## 7. Troubleshooting
+
+### "The default build profile doesn't exist"
+
+Run `conan profile detect` to auto-generate a default profile. This is needed once per machine (or per `CONAN_HOME` if you use a custom one).
+
+### "Unrecognized version field" from CMake presets
+
+Your CMake is older than 3.23. Use the manual cmake command instead of `--preset`:
+```bash
+cmake -S . -B build/Release -G "Unix Makefiles" \
+    -DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake \
+    -DCMAKE_BUILD_TYPE=Release
+cmake --build build/Release
+```
 
 ### "Package not found in remotes"
 
@@ -264,8 +295,13 @@ target_link_libraries(myapp PRIVATE kalman_filter::kalman_filter)
 
 And your CMake configure uses the Conan toolchain:
 ```bash
+# cmake 3.23+
 cmake --preset conan-release
-# or: cmake -DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake
+
+# cmake < 3.23
+cmake -S . -B build/Release -G "Unix Makefiles" \
+    -DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake \
+    -DCMAKE_BUILD_TYPE=Release
 ```
 
 ### "Multiple definitions" linker error

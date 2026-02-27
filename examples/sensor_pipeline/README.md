@@ -16,15 +16,24 @@ Demonstrates consuming all three MatlabToCpp algorithms as Conan packages:
 ## Build
 
 ```bash
+# First time only: create a default Conan profile
+conan profile detect
+
 # Add Nexus remote (if not already configured)
 conan remote add nexus http://<EC2_IP>:8081/repository/conan-hosted/
 
 # Install dependencies from Nexus
 conan install . --build=missing --remote=nexus
 
-# Build
+# Build (cmake 3.23+)
 cmake --preset conan-release
 cmake --build --preset conan-release
+
+# Or if cmake < 3.23:
+cmake -S . -B build/Release -G "Unix Makefiles" \
+    -DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake \
+    -DCMAKE_BUILD_TYPE=Release
+cmake --build build/Release
 
 # Run
 ./build/Release/sensor_pipeline
