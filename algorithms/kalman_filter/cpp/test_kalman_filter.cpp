@@ -125,9 +125,9 @@ TEST_P(KalmanFilterTest, MatchesExpectedOutput) {
     // Call generated C++ function
     // NOTE: The exact function signature depends on MATLAB Coder output.
     // You may need to adjust this call to match the generated API.
-    kalman_filter(state, tc.measurement, cov,
-                  tc.measurement_noise, tc.process_noise,
-                  updated_state, updated_cov);
+    kalman_filter::kalman_filter(state, tc.measurement, cov,
+                                tc.measurement_noise, tc.process_noise,
+                                updated_state, updated_cov);
 
     // Validate state output
     for (size_t i = 0; i < tc.expected_state.size(); i++) {

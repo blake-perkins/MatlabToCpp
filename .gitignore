@@ -1,5 +1,6 @@
 # Generated C++ code (produced by MATLAB Coder in CI)
-**/generated/
+# NOTE: generated/ is tracked in git with hand-written C++ equivalents.
+# When MATLAB Coder is available, these files are overwritten by CI.
 
 # Build artifacts
 build/

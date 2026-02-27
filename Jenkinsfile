@@ -23,7 +23,7 @@ pipeline {
     environment {
         NEXUS_URL    = credentials('nexus-conan-url')
         NEXUS_CREDS  = credentials('nexus-conan-creds')
-        MATLAB_ROOT  = '/opt/MATLAB/R2024b'
+        MATLAB_ROOT  = '/opt/matlab/R2024b'
         CONAN_HOME   = "${WORKSPACE}/.conan2"
     }
 
@@ -73,12 +73,25 @@ pipeline {
 
                     env.CHANGED_ALGORITHMS = changed
                     echo "Algorithms to build: ${changed}"
+
+                    // Check if MATLAB is available
+                    def matlabCheck = sh(
+                        script: "test -x '${env.MATLAB_ROOT}/bin/matlab' && echo 'true' || echo 'false'",
+                        returnStdout: true
+                    ).trim()
+                    env.MATLAB_AVAILABLE = matlabCheck
+                    if (matlabCheck == 'true') {
+                        echo "MATLAB found at ${env.MATLAB_ROOT}"
+                    } else {
+                        echo "MATLAB not found — skipping MATLAB stages (tests, codegen, equivalence)"
+                    }
                 }
             }
         }
 
         // ---- Stage 2: MATLAB Tests ----
         stage('MATLAB Tests') {
+            when { expression { env.MATLAB_AVAILABLE == 'true' } }
             steps {
                 script {
                     def algos = env.CHANGED_ALGORITHMS.split('\n')
@@ -95,6 +108,7 @@ pipeline {
 
         // ---- Stage 3: Code Generation ----
         stage('Code Generation') {
+            when { expression { env.MATLAB_AVAILABLE == 'true' } }
             steps {
                 script {
                     def algos = env.CHANGED_ALGORITHMS.split('\n')
@@ -143,6 +157,7 @@ pipeline {
 
         // ---- Stage 6: Equivalence Check ----
         stage('Equivalence Check') {
+            when { expression { env.MATLAB_AVAILABLE == 'true' } }
             steps {
                 script {
                     def algos = env.CHANGED_ALGORITHMS.split('\n')
