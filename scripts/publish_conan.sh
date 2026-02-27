@@ -33,11 +33,6 @@ fi
 
 # Configure Nexus remote (idempotent)
 conan remote add nexus "$NEXUS_URL" --force 2>/dev/null || true
-conan remote login nexus "$NEXUS_USER" -p "$NEXUS_PASS" < /dev/null || true
-
-# Export Conan env vars for authentication (more reliable than stored credentials)
-export CONAN_LOGIN_USERNAME_NEXUS="$NEXUS_USER"
-export CONAN_PASSWORD_NEXUS="$NEXUS_PASS"
 
 # Set GENERATED_DIR for the Conan build
 export GENERATED_DIR="${ALGO_DIR}/generated"
@@ -51,13 +46,22 @@ if [ ! -f "$CONAN_PROFILE" ]; then
     CONAN_PROFILE="default"
 fi
 
-# Create the package
+# Disable nexus remote during package creation to avoid auth loop
+# (Conan 2 + Nexus token auth has a known compatibility issue)
+# Dependencies (gtest, nlohmann_json) come from conancenter, not nexus.
+conan remote disable nexus 2>/dev/null || true
+
+# Create the package (only uses conancenter for deps)
 conan create "${ALGO_DIR}/cpp" \
     --name="${ALGO}" \
     --version="${NEW_VERSION}" \
     -pr="$CONAN_PROFILE" \
     --build=missing \
     2>&1 < /dev/null | tee "${WORKSPACE}/results/${ALGO}/conan_create.log"
+
+# Re-enable nexus remote and login for upload
+conan remote enable nexus 2>/dev/null || true
+conan remote login nexus "$NEXUS_USER" -p "$NEXUS_PASS" < /dev/null
 
 # Upload to Nexus
 conan upload "${ALGO}/${NEW_VERSION}" \
