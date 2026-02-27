@@ -70,8 +70,7 @@ sudo dnf install -y \
     python3-pip \
     xorg-x11-server-Xvfb \
     jq \
-    git \
-    curl
+    git
 
 # Conan 2
 if command -v conan &>/dev/null; then
