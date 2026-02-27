@@ -54,6 +54,7 @@ log_info "CMake configure..."
 cmake -S "${ALGO_DIR}/cpp" \
       -B "$BUILD_DIR" \
       -DCMAKE_BUILD_TYPE=Release \
+      -DBUILD_TESTING=ON \
       -DGENERATED_DIR="${ALGO_DIR}/generated" \
       -DTEST_VECTORS_DIR="${ALGO_DIR}/test_vectors" \
       -DALGORITHM_NAME="${ALGO}" \
