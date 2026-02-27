@@ -40,7 +40,13 @@ if [ -f "${ALGO_DIR}/cpp/conanfile.py" ]; then
         --profile="${CONAN_PROFILE}" \
         2>&1 | tee "${RESULTS_DIR}/conan_install.log"
 
-    CONAN_TOOLCHAIN="-DCMAKE_TOOLCHAIN_FILE=${BUILD_DIR}/conan/conan_toolchain.cmake"
+    # Conan 2 may place the toolchain in a nested directory
+    TOOLCHAIN_FILE=$(find "${BUILD_DIR}/conan" -name "conan_toolchain.cmake" -print -quit 2>/dev/null)
+    if [ -n "$TOOLCHAIN_FILE" ]; then
+        CONAN_TOOLCHAIN="-DCMAKE_TOOLCHAIN_FILE=${TOOLCHAIN_FILE}"
+    else
+        log_warn "conan_toolchain.cmake not found — building without Conan toolchain"
+    fi
 fi
 
 # CMake configure

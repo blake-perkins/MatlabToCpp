@@ -29,7 +29,7 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 WORKSPACE="${WORKSPACE:-${REPO_ROOT}}"
 
 # MATLAB root — override via environment or Jenkins config
-MATLAB_ROOT="${MATLAB_ROOT:-/opt/MATLAB/R2024b}"
+MATLAB_ROOT="${MATLAB_ROOT:-/opt/matlab/R2024b}"
 
 # ---- Algorithm helpers ----
 
